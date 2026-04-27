@@ -1,6 +1,5 @@
 ## 1.1.2
-* Bump package version.
-* Add build and publish instructions.
+* Fix Android producer token lifecycle for multiple Flutter engines.
 
 ## 1.1.1
 * fix parameters error
