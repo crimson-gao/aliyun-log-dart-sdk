@@ -8,6 +8,36 @@ Aliyun SLS SDK for Dart
 
 阿里云日志服务 SLS 官方插件，当前支持 Android/iOS 数据采集。
 
+#### 构建与发包
+
+发布前请先确认根目录 `pubspec.yaml` 中的 `version` 已递增，并在 `CHANGELOG.md` 中补充本次变更记录。当前版本为 `1.1.2`。
+
+本仓库是 Flutter 插件包，发布到 pub.dev 时不需要手动提交 `build/` 目录产物，`pub publish` 会根据包源码生成发布包。建议在仓库根目录执行以下检查：
+
+```sh
+flutter pub get
+flutter analyze
+flutter test
+flutter pub publish --dry-run
+```
+
+如需验证 Android/iOS 原生侧构建，可进入示例工程执行：
+
+```sh
+cd example
+flutter pub get
+flutter build apk --debug
+flutter build ios --no-codesign
+```
+
+确认 dry-run 无误后，在仓库根目录执行正式发布：
+
+```sh
+flutter pub publish
+```
+
+发布到 pub.dev 需要拥有该 package 的发布权限；首次发布或凭据失效时，命令会提示完成登录授权。如果要发布到私有 Pub 服务，可按私有源要求配置 `PUB_HOSTED_URL` 或使用 `--server` 指定服务地址。
+
 #### 使用方式
 
 - 登录 [阿里云 SLS 控制台](https://sls.console.aliyun.com/lognext/profile)，并创建或获取endpoint、project、logstore、AK 等信息。

@@ -1,3 +1,7 @@
+## 1.1.2
+* Bump package version.
+* Add build and publish instructions.
+
 ## 1.1.1
 * fix parameters error
 
