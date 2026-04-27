@@ -36,7 +36,7 @@ public class AliyunLogDartSdkPlugin implements FlutterPlugin, MethodCallHandler 
     private Context context;
     private static final Random sRandom = new Random();
     private static final Handler sHandler = new Handler(Looper.getMainLooper());
-    private static final Map<String, Pair<LogProducerConfig, LogProducerClient>> sInstanceHandlers = new HashMap<>();
+    private final Map<String, Pair<LogProducerConfig, LogProducerClient>> instanceHandlers = new HashMap<>();
 
     @Override
     public void onAttachedToEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {
@@ -106,7 +106,7 @@ public class AliyunLogDartSdkPlugin implements FlutterPlugin, MethodCallHandler 
                 ));
             });
             final String token = String.valueOf(sRandom.nextInt(100000));
-            sInstanceHandlers.put(token, new Pair<LogProducerConfig, LogProducerClient>(logProducerConfig, logProducerClient));
+            instanceHandlers.put(token, new Pair<LogProducerConfig, LogProducerClient>(logProducerConfig, logProducerClient));
             result.success(success(new HashMap<String, Object>(){
                 {
                     put("token", token);
@@ -123,7 +123,8 @@ public class AliyunLogDartSdkPlugin implements FlutterPlugin, MethodCallHandler 
             return null;
         }
 
-        return sInstanceHandlers.get(token).first;
+        Pair<LogProducerConfig, LogProducerClient> instanceHandler = instanceHandlers.get(token);
+        return null != instanceHandler ? instanceHandler.first : null;
     }
 
     private LogProducerClient getLogProducerClientByToken(MethodCall call) {
@@ -132,7 +133,8 @@ public class AliyunLogDartSdkPlugin implements FlutterPlugin, MethodCallHandler 
             return null;
         }
 
-        return sInstanceHandlers.get(token).second;
+        Pair<LogProducerConfig, LogProducerClient> instanceHandler = instanceHandlers.get(token);
+        return null != instanceHandler ? instanceHandler.second : null;
     }
 
     private void updateLogProducerConfig(MethodCall call, LogProducerConfig logProducerConfig) {
@@ -293,7 +295,7 @@ public class AliyunLogDartSdkPlugin implements FlutterPlugin, MethodCallHandler 
         logProducerClient.destroyLogProducer();
         logProducerClient = null;
 
-        sInstanceHandlers.remove(optArgument(call, "token", ""));
+        instanceHandlers.remove(optArgument(call, "token", ""));
 
         result.success(success());
     }
@@ -328,12 +330,12 @@ public class AliyunLogDartSdkPlugin implements FlutterPlugin, MethodCallHandler 
     @Override
     public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {
         channel.setMethodCallHandler(null);
-        for (Entry<String, Pair<LogProducerConfig, LogProducerClient>> entry : sInstanceHandlers.entrySet()) {
+        for (Entry<String, Pair<LogProducerConfig, LogProducerClient>> entry : instanceHandlers.entrySet()) {
             if (null != entry.getValue().second) {
                 entry.getValue().second.destroyLogProducer();
             }
         }
-        sInstanceHandlers.clear();
+        instanceHandlers.clear();
 
         //if (null != logProducerClient) {
         //    logProducerClient.destroyLogProducer();
